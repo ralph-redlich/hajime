@@ -25,13 +25,16 @@ class InvalidClubPersonnelExport implements FromCollection, WithMapping, WithHea
             $row['reason'],
             $row['vetting_expiry'],
             $row['safeguarding_expiry'],
+            $row['safeguarding_l1_expiry'],
+            $row['safeguarding_l2_expiry'],
+            $row['safeguarding_l3_expiry'],
             $row['first_aid_expiry'],
         ];
     }
 
     public function headings(): array
     {
-        return ['Club', 'Name', 'Role', 'Reason', 'Vetting Expiry', 'Safeguarding Expiry', 'First Aid Expiry'];
+        return ['Club', 'Name', 'Role', 'Reason', 'Vetting Expiry', 'Safeguarding Expiry', 'Safeguarding L1 Expiry', 'Safeguarding L2 Expiry', 'Safeguarding L3 Expiry', 'First Aid Expiry'];
     }
 
     public function title(): string

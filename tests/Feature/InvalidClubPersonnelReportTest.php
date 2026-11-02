@@ -50,6 +50,40 @@ class InvalidClubPersonnelReportTest extends TestCase
         $this->assertSame('Vetting not set', $rows['Vic']['reason']);
     }
 
+    public function test_safeguarding_levels_get_their_own_reasons_and_blanks(): void
+    {
+        $club = $this->club('Levels');
+        $this->personnel($club, 'Lee', 'Secretary', [
+            'safeguarding_l1_expiry' => now()->addYear(),
+            'safeguarding_l2_expiry' => now()->subDay(),
+        ]);
+
+        $row = InvalidClubPersonnel::rows()->first();
+
+        $this->assertSame('Safeguarding L2 expired', $row['reason']);
+        $this->assertNotNull($row['safeguarding_l1_expiry']);
+        $this->assertNull($row['safeguarding_l3_expiry']);
+    }
+
+    public function test_designated_person_matches_compliance_report_for_every_club(): void
+    {
+        foreach (['A', 'B', 'C'] as $i => $name) {
+            $club = $this->club($name);
+            $this->personnel($club, "Old $name", 'Designated Person', ['vetting_expiry' => now()->subDay()]);
+            if ($i > 0) {
+                $this->personnel($club, "New $name", 'Designated Person', ['vetting_expiry' => now()->subDay()]);
+            }
+        }
+        $this->club('NoDP');
+
+        $report = InvalidClubPersonnel::rows()->where('role', 'Designated Person')->pluck('name', 'club');
+
+        foreach (Club::all() as $club) {
+            $expected = Personnel::designatedofficer()->where('club_id', $club->id)->first()?->name;
+            $this->assertSame($expected, $report[$club->name] ?? null, $club->name);
+        }
+    }
+
     public function test_excludes_inactive_clubs(): void
     {
         $this->personnel($this->club('Closed', 'Inactive'), 'Gone', 'Secretary', ['vetting_expiry' => now()->subDay()]);

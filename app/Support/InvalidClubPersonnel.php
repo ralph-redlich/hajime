@@ -45,6 +45,12 @@ class InvalidClubPersonnel
                     $reasons[] = $label.' not set';
                 }
 
+                foreach ([1, 2, 3] as $level) {
+                    if (CertificateExpiry::isExpired($person->{'safeguarding_l'.$level.'_expiry'})) {
+                        $reasons[] = 'Safeguarding L'.$level.' expired';
+                    }
+                }
+
                 return [
                     'club' => $activeClubs[$person->club_id],
                     'club_id' => $person->club_id,
@@ -53,6 +59,9 @@ class InvalidClubPersonnel
                     'reason' => implode(' / ', $reasons),
                     'vetting_expiry' => $person->vetting_expiry,
                     'safeguarding_expiry' => $person->safeguarding_expiry,
+                    'safeguarding_l1_expiry' => $person->safeguarding_l1_expiry,
+                    'safeguarding_l2_expiry' => $person->safeguarding_l2_expiry,
+                    'safeguarding_l3_expiry' => $person->safeguarding_l3_expiry,
                     'first_aid_expiry' => $person->first_aid_expiry ?? null,
                     'invalid' => $reasons !== [],
                 ];
