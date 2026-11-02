@@ -84,6 +84,23 @@ class InvalidClubPersonnelReportTest extends TestCase
         }
     }
 
+    public function test_report_page_renders_and_export_downloads_as_xlsx(): void
+    {
+        $user = \App\Models\User::factory()->create();
+        $user->assignRole(\Spatie\Permission\Models\Role::findOrCreate('admin'));
+        $this->personnel($this->club('Alpha'), 'Ann', 'Secretary', ['vetting_expiry' => now()->subDay()]);
+
+        $this->actingAs($user)->get(route('report.invalid.personnel'))
+            ->assertOk()
+            ->assertSee('Invalid Club Personnel')
+            ->assertSee('Vetting expired')
+            ->assertSee('Safeguarding L3');
+
+        $response = $this->actingAs($user)->get(route('report.invalid.export'))->assertOk();
+        $this->assertMatchesRegularExpression('/filename=.*invalid-club-personnel-\d{4}-\d{2}-\d{2}\.xlsx/', $response->headers->get('content-disposition'));
+        $this->assertSame('PK', substr($response->baseResponse->getFile()->getContent(), 0, 2), 'xlsx is a zip file');
+    }
+
     public function test_excludes_inactive_clubs(): void
     {
         $this->personnel($this->club('Closed', 'Inactive'), 'Gone', 'Secretary', ['vetting_expiry' => now()->subDay()]);
