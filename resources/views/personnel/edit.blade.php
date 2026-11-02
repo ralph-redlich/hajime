@@ -89,6 +89,7 @@
                                     id="safeguarding_expiry" name="safeguarding_expiry" type="date" value="{{
                                     $person->safeguarding_expiry }}">
                             </div>
+                            @include('partials.safeguarding-level-expiries', ['record' => $person])
                         </div>
                         <div class="w-full md:w-1/2 sm:w-full mt-16 md:mt-0">
                             <h4 class="w-auto text-gray-500 text-xl font-bold mb-6">First Aid information:</h4>
