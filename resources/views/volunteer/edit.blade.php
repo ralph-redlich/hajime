@@ -105,6 +105,7 @@
                                         id="safeguarding_expiry" name="safeguarding_expiry" type="date"
                                         value="{{ $volunteer->safeguarding_expiry }}">
                                 </div>
+                                @include('partials.safeguarding-level-expiries', ['record' => $volunteer])
                             </div>
                         </div>
                         <div class="mt-6">

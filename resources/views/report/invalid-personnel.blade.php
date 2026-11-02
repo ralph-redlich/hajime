@@ -50,7 +50,7 @@
                                 hover:text-white group
                                 flex
                                 items-center px-2 py-2 text-sm font-bold rounded-md">
-                                    Invalid Personnel
+                                    Invalid Club Personnel
                                 </a>
 
                                 <a href="{{ route('report.active.coaches') }}" class="text-gray-300 hover:bg-gray-700 hover:text-white
@@ -58,14 +58,6 @@
                                 flex
                                 items-center px-2 py-2 text-sm font-bold rounded-md">
                                     Active Coaches
-                                </a>
-                                <a href="{{ route('report.invalid.coaches') }}" class="text-gray-300
-                                hover:bg-gray-700
-                                hover:text-white
-                                group
-                                flex
-                                items-center px-2 py-2 text-sm font-bold rounded-md">
-                                    Invalid Coaches
                                 </a>
                                 <a href="{{ route('report.email.consent') }}" class="text-gray-300 hover:bg-gray-700
                                 hover:text-white group
@@ -104,7 +96,7 @@
                         </svg>
                     </button>
                     <div class="text-2xl font-bold text-gray-700 pl-8 flex items-center">
-                        <h2>Invalid Personnel Report</h2>
+                        <h2>Invalid Club Personnel Report</h2>
                     </div>
                 </div>
 
@@ -137,58 +129,35 @@
                                 <th
                                     class="px-5 py-3 bg-gray-600 text-left
                                             text-xs font-semibold text-gray-100 uppercase tracking-wider shadow-lg">
-                                    Expired or Missing
+                                    Reason
                                 </th>
-                                <th
-                                    class="px-5 py-3 bg-gray-600 text-left
-                                            text-xs font-semibold text-gray-100 uppercase tracking-wider shadow-lg">
-                                    Expiry Date
-                                </th>
+                                @foreach (['Vetting Expiry', 'Safeguarding Expiry', 'Safeguarding L1', 'Safeguarding L2', 'Safeguarding L3', 'First Aid Expiry'] as $heading)
+                                    <th
+                                        class="px-5 py-3 bg-gray-600 text-left
+                                                text-xs font-semibold text-gray-100 uppercase tracking-wider shadow-lg">
+                                        {{ $heading }}
+                                    </th>
+                                @endforeach
 
                             </tr>
                             </thead>
                             <tbody>
                             @foreach ($personnel as $person)
                                 <tr>
-                                    <td class="px-5 py-4 border-b border-gray-200 text-sm">
-                                        <p class="text-gray-900 whitespace-no-wrap">
-                                            {{ $person->club->name }}
-                                        </p>
-                                    </td>
-                                    <td class="px-5 py-4 border-b border-gray-200 text-sm">
-                                        <p class="text-gray-900 whitespace-no-wrap">
-                                            {{ $person->name }}
-                                        </p>
-                                    </td>
-                                    <td class="px-5 py-4 border-b border-gray-200 text-sm">
-                                        <p class="text-gray-900 whitespace-no-wrap">
-                                            {{ $person->role }}
-                                        </p>
-                                    </td>
-                                    <td class="px-5 py-4 border-b border-gray-200 text-sm">
-                                        <p class="text-gray-900 whitespace-no-wrap">
-                                            @if(is_null($person->vetting_expiry))
-                                                <span class="gray-date">Vetting not set</span>
-                                            @elseif ($person->vetting_expiry < now())
-                                                <span class="expired-date">Vetting Expired</span>
+                                    @foreach (['club', 'name', 'role', 'reason'] as $field)
+                                        <td class="px-5 py-4 border-b border-gray-200 text-sm">
+                                            <p class="text-gray-900 whitespace-no-wrap">{{ $person[$field] }}</p>
+                                        </td>
+                                    @endforeach
+                                    @foreach (['vetting_expiry', 'safeguarding_expiry', 'safeguarding_l1_expiry', 'safeguarding_l2_expiry', 'safeguarding_l3_expiry', 'first_aid_expiry'] as $field)
+                                        <td class="px-5 py-4 border-b border-gray-200 text-sm">
+                                            @if ($person[$field])
+                                                <span class="{{ \App\Support\CertificateExpiry::isExpired($person[$field]) ? 'expired-date' : 'text-gray-900' }}">
+                                                    {{ \Carbon\Carbon::parse($person[$field])->format('d/m/Y') }}
+                                                </span>
                                             @endif
-                                            @if(is_null($person->safeguarding_expiry))
-                                                    <span class="gray-date">Safeguarding not set</span>
-                                            @elseif ($person->safeguarding_expiry < now())
-                                                    <span class="expired-date">Safeguarding Expired</span>
-                                            @endif
-                                        </p>
-                                    </td>
-                                    <td class="px-5 py-4 border-b border-gray-200 text-sm">
-                                        <p class="text-gray-900 whitespace-no-wrap">
-                                            @if ($person->vetting_expiry < now() and !empty($person->vetting_expiry))
-                                                <span class="expired-date">V: {{ $person->vetting_expiry }}</span>
-                                            @endif
-                                            @if ($person->safeguarding_expiry < now() and !empty($person->safeguarding_expiry))
-                                                <span class="expired-date">S: {{ $person->safeguarding_expiry }}</span>
-                                            @endif
-                                        </p>
-                                    </td>
+                                        </td>
+                                    @endforeach
                                 </tr>
                             @endforeach
                             </tbody>
