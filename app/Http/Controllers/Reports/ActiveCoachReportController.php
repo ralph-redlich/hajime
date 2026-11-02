@@ -20,7 +20,7 @@ class ActiveCoachReportController extends Controller
 
     public function export()
     {
-        $filename = 'active-coaches-'.date('d-m-y');
-        return Excel::download(new ActiveCoachExport(), $filename, \Maatwebsite\Excel\Excel::XLSX);
+        $filename = 'active-coaches-'.date('Y-m-d').'.xlsx';
+        return Excel::download(new ActiveCoachExport(), $filename);
     }
 }

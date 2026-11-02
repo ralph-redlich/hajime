@@ -84,13 +84,10 @@
                                role="menuitem">Club Status</a>
                             <a href="{{ route('report.invalid.personnel') }}"
                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                               role="menuitem">Invalid Personnel</a>
+                               role="menuitem">Invalid Club Personnel</a>
                             <a href="{{ route('report.active.coaches') }}" class="block px-4 py-2 text-sm text-gray-700
                             hover:bg-gray-100"
                                role="menuitem">Active Coaches</a>
-                            <a href="{{ route('report.invalid.coaches') }}" class="block px-4 py-2 text-sm text-gray-700
-                            hover:bg-gray-100"
-                               role="menuitem">Invalid Coaches</a>
                             <a href="{{ route('report.email.consent') }}"
                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                role="menuitem">Email Consent</a>
