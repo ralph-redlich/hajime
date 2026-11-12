@@ -14,11 +14,6 @@
             width: 1.5rem;
             height: 1.5rem;
         }
-        @media (prefers-color-scheme: dark) {
-            .memberships-table th[aria-sort] { background-color: rgb(72 150 43 / 0.35); }
-            .memberships-table th[aria-sort] .fi-ta-header-cell-label { color: #fff; }
-            .memberships-table th[aria-sort] .fi-ta-header-cell-sort-icon { color: #8fd16f; }
-        }
     </style>
 
     {{ $this->table }}

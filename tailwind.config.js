@@ -20,7 +20,7 @@ module.exports = {
         'focus:ring-danger-500',
         'fi-color-danger',
     ],
-  darkMode: false, // or 'media' or 'class'
+  darkMode: 'class', // never follow OS dark mode (false == 'media' in Tailwind 3); app UI is light-only
   theme: {
     extend: {
         colors: {
