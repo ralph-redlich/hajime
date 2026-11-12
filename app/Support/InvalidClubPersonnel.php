@@ -18,6 +18,17 @@ class InvalidClubPersonnel
     /** Roles held by one person per club; the Compliance Status report shows only the first record. */
     public const SINGLE_HOLDER_ROLES = ['Head Coach', 'Secretary', 'Designated Person', 'Childrens Officer'];
 
+    /** Safeguarding level each role must hold. Coaches, Assistant Coaches, Secretaries and Volunteers need L1. */
+    public const REQUIRED_SAFEGUARDING_LEVEL = [
+        'Childrens Officer' => 2,
+        'Designated Person' => 3,
+    ];
+
+    public static function requiredLevel(?string $role): int
+    {
+        return self::REQUIRED_SAFEGUARDING_LEVEL[$role] ?? 1;
+    }
+
     public static function rows(): Collection
     {
         $activeClubs = Club::where('status', 'Active')->pluck('name', 'id');
@@ -38,17 +49,34 @@ class InvalidClubPersonnel
         return $personnel->concat($coaches)->concat($volunteers)
             ->map(function ($person) use ($activeClubs) {
                 $reasons = [];
+                $level = self::requiredLevel($person->role);
+
+                // Safeguarding is tracked per level; the legacy single date counts
+                // as the role's required level until a level date is entered.
+                $levels = [];
+                foreach ([1, 2, 3] as $n) {
+                    $levels[$n] = $person->{'safeguarding_l'.$n.'_expiry'};
+                }
+                $levels[$level] = $person->safeguarding_expiry; // required level, legacy fallback
+
                 foreach (CertificateExpiry::expiredCertificates($person) as $label) {
-                    $reasons[] = $label.' expired';
+                    if ($label !== 'Safeguarding') {
+                        $reasons[] = $label.' expired';
+                    }
                 }
                 foreach (CertificateExpiry::missingCertificates($person) as $label) {
-                    $reasons[] = $label.' not set';
+                    if ($label !== 'Safeguarding') {
+                        $reasons[] = $label.' not set';
+                    }
                 }
 
-                foreach ([1, 2, 3] as $level) {
-                    if (CertificateExpiry::isExpired($person->{'safeguarding_l'.$level.'_expiry'})) {
-                        $reasons[] = 'Safeguarding L'.$level.' expired';
+                foreach ([1, 2, 3] as $n) {
+                    if (CertificateExpiry::isExpired($levels[$n])) {
+                        $reasons[] = 'Safeguarding L'.$n.' expired';
                     }
+                }
+                if (empty($levels[$level]) && array_key_exists('safeguarding_expiry', $person->getAttributes())) {
+                    $reasons[] = 'Safeguarding L'.$level.' not set';
                 }
 
                 return [
@@ -58,10 +86,9 @@ class InvalidClubPersonnel
                     'role' => $person->role,
                     'reason' => implode(' / ', $reasons),
                     'vetting_expiry' => $person->vetting_expiry,
-                    'safeguarding_expiry' => $person->safeguarding_expiry,
-                    'safeguarding_l1_expiry' => $person->safeguarding_l1_expiry,
-                    'safeguarding_l2_expiry' => $person->safeguarding_l2_expiry,
-                    'safeguarding_l3_expiry' => $person->safeguarding_l3_expiry,
+                    'safeguarding_l1_expiry' => $levels[1],
+                    'safeguarding_l2_expiry' => $levels[2],
+                    'safeguarding_l3_expiry' => $levels[3],
                     'first_aid_expiry' => $person->first_aid_expiry ?? null,
                     'invalid' => $reasons !== [],
                 ];

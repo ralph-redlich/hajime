@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Personnel extends Model
 {
-    use HasFactory;
+    use HasFactory, \App\Models\Concerns\HasRequiredSafeguardingExpiry;
 
     protected $guarded = [];
 

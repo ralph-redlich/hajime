@@ -131,7 +131,7 @@
                                             text-xs font-semibold text-gray-100 uppercase tracking-wider shadow-lg">
                                     Reason
                                 </th>
-                                @foreach (['Vetting Expiry', 'Safeguarding Expiry', 'Safeguarding L1', 'Safeguarding L2', 'Safeguarding L3', 'First Aid Expiry'] as $heading)
+                                @foreach (['Vetting Expiry', 'Safeguarding L1', 'Safeguarding L2', 'Safeguarding L3', 'First Aid Expiry'] as $heading)
                                     <th
                                         class="px-5 py-3 bg-gray-600 text-left
                                                 text-xs font-semibold text-gray-100 uppercase tracking-wider shadow-lg">
@@ -149,7 +149,7 @@
                                             <p class="text-gray-900 whitespace-no-wrap">{{ $person[$field] }}</p>
                                         </td>
                                     @endforeach
-                                    @foreach (['vetting_expiry', 'safeguarding_expiry', 'safeguarding_l1_expiry', 'safeguarding_l2_expiry', 'safeguarding_l3_expiry', 'first_aid_expiry'] as $field)
+                                    @foreach (['vetting_expiry', 'safeguarding_l1_expiry', 'safeguarding_l2_expiry', 'safeguarding_l3_expiry', 'first_aid_expiry'] as $field)
                                         <td class="px-5 py-4 border-b border-gray-200 text-sm">
                                             @if ($person[$field])
                                                 <span class="{{ \App\Support\CertificateExpiry::isExpired($person[$field]) ? 'expired-date' : 'text-gray-900' }}">

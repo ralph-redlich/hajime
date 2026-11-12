@@ -12,7 +12,12 @@ class Volunteer extends Model
      * @var mixed
      */
 
-    use HasFactory;
+    use HasFactory, \App\Models\Concerns\HasRequiredSafeguardingExpiry;
+
+    protected function safeguardingRole(): ?string
+    {
+        return 'Volunteer';
+    }
 
     public function club()
     {

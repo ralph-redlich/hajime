@@ -72,7 +72,8 @@ class CertificateExpiry
         $missing = [];
 
         foreach (self::REQUIRED as $key) {
-            if (array_key_exists($key.'_expiry', $attributes) && empty($attributes[$key.'_expiry'])) {
+            if (array_key_exists($key.'_expiry', $attributes)
+                && empty(method_exists($record, 'getAttribute') ? $record->getAttribute($key.'_expiry') : $attributes[$key.'_expiry'])) {
                 $missing[] = self::CERTIFICATES[$key];
             }
         }
