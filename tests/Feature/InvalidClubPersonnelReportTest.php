@@ -45,7 +45,8 @@ class InvalidClubPersonnelReportTest extends TestCase
         $this->assertEqualsCanonicalizing(['Ann', 'Cora', 'Vic'], $rows->keys()->all());
         $this->assertSame('Vetting expired / First Aid expired', $rows['Ann']['reason']);
         $this->assertSame('Coach', $rows['Cora']['role']);
-        $this->assertSame('Safeguarding expired', $rows['Cora']['reason']);
+        $this->assertSame('Safeguarding L1 expired', $rows['Cora']['reason']);
+        $this->assertNotNull($rows['Cora']['safeguarding_l1_expiry']);
         $this->assertSame('Volunteer', $rows['Vic']['role']);
         $this->assertSame('Vetting not set', $rows['Vic']['reason']);
     }
@@ -63,6 +64,23 @@ class InvalidClubPersonnelReportTest extends TestCase
         $this->assertSame('Safeguarding L2 expired', $row['reason']);
         $this->assertNotNull($row['safeguarding_l1_expiry']);
         $this->assertNull($row['safeguarding_l3_expiry']);
+    }
+
+    public function test_legacy_safeguarding_date_fills_the_level_required_by_role(): void
+    {
+        $club = $this->club('Roles');
+        $past = now()->subDay();
+        $this->personnel($club, 'Cathy', 'Childrens Officer', ['safeguarding_expiry' => $past]);
+        $this->personnel($club, 'Dee', 'Designated Person', ['safeguarding_expiry' => $past]);
+
+        $rows = InvalidClubPersonnel::rows()->keyBy('name');
+
+        $this->assertSame('Safeguarding L2 expired', $rows['Cathy']['reason']);
+        $this->assertNotNull($rows['Cathy']['safeguarding_l2_expiry']);
+        $this->assertNull($rows['Cathy']['safeguarding_l1_expiry']);
+        $this->assertSame('Safeguarding L3 expired', $rows['Dee']['reason']);
+        $this->assertNotNull($rows['Dee']['safeguarding_l3_expiry']);
+        $this->assertArrayNotHasKey('safeguarding_expiry', $rows['Dee']);
     }
 
     public function test_designated_person_matches_compliance_report_for_every_club(): void

@@ -13,7 +13,8 @@ class ActiveCoachReportController extends Controller
     public function index()
     {
         $coaches = Coach::where('vetting_expiry', '>=', now())
-            ->where('safeguarding_expiry', '>=', now())
+            ->where(fn ($q) => $q->where('safeguarding_l1_expiry', '>=', now())
+                ->orWhere(fn ($q) => $q->whereNull('safeguarding_l1_expiry')->where('safeguarding_expiry', '>=', now())))
             ->orderBy('club_id', 'asc')->with('club:id,name')->get();
         return view('report.active-coach', compact('coaches'));
     }

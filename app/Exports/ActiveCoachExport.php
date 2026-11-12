@@ -17,7 +17,8 @@ class ActiveCoachExport implements FromCollection, WithMapping, WithHeadings, Wi
     public function collection()
     {
         return Coach::where('vetting_expiry', '>=', now())
-        ->where('safeguarding_expiry', '>=', now())
+        ->where(fn ($q) => $q->where('safeguarding_l1_expiry', '>=', now())
+                ->orWhere(fn ($q) => $q->whereNull('safeguarding_l1_expiry')->where('safeguarding_expiry', '>=', now())))
         ->orderBy('club_id', 'asc')->with('club:id,name')->get();;
     }
 

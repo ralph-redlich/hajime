@@ -7,7 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Coach extends Model
 {
-    use HasFactory;
+    use HasFactory, \App\Models\Concerns\HasRequiredSafeguardingExpiry;
+
+    protected function safeguardingRole(): ?string
+    {
+        return 'Coach';
+    }
 
     protected $guarded = [];
 

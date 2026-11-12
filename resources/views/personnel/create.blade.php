@@ -79,14 +79,7 @@
                                 id="safeguarding_completion" name="safeguarding_completion" type="date"
                                        placeholder="2020-01-01">
                             </div>
-                            <div class="mb-4">
-                                <label class="inline-block w-48 text-grey-darker text-sm font-bold mb-2" for="safeguarding_expiry">
-                                    Safeguarding expiry
-                                </label>
-                                <input class="shadow border-gray-300 rounded w-3/4 md:w-48 py-2 px-3 text-grey-darker"
-                                    id="safeguarding_expiry" name="safeguarding_expiry" type="date"
-                                       placeholder="2020-01-01">
-                            </div>
+@include('partials.safeguarding-level-expiries', ['role' => $role])
                         </div>
                         <div class="w-full md:w-1/2 sm:w-full mt-16 md:mt-0">
                             <h4 class="w-auto text-gray-500 text-xl font-bold mb-6">First Aid information:</h4>
