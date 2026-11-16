@@ -2,6 +2,9 @@
     <td class="px-5 py-4 border-b border-gray-200 text-sm">
         <p class="text-gray-900 whitespace-no-wrap" wire:model="grade_level">
             {{ $grade->grade_level}}
+            @if ($grade->auto_transferred)
+                <span class="text-xs text-gray-500">(automatic transfer at 14)</span>
+            @endif
         </p>
     </td>
     <td class="px-5 py-4 border-b border-gray-200 text-sm">

@@ -26,6 +26,7 @@ class Kernel extends ConsoleKernel
     {
          $schedule->command('app:clear-old-logs')->daily();
          $schedule->command('app:recalculate-club-compliance')->dailyAt('00:05');
+         $schedule->command('app:transfer-mon-to-kyu')->dailyAt('00:10')->timezone('Europe/Dublin');
          $schedule->command('app:send-expiry-notifications')->dailyAt('09:00')->timezone('Europe/Dublin');
     }
 
