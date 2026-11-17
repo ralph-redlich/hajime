@@ -13,7 +13,7 @@ class PagesController extends Controller
 {
     public function logsPage()
     {
-        $logs = Activity::latest()->paginate(25)->withQueryString();
+        $logs = Activity::with(["causer", "subject"])->latest()->paginate(25)->withQueryString();
 
         return view('pages.logs-page', compact('logs'));
     }

@@ -95,6 +95,7 @@ class TransferMonToKyu extends Command
             ]);
 
             activity()->performedOn($member)->withProperties([
+                'name' => $member->first_name . ' ' . $member->last_name,
                 'from' => $grades->last()->grade_level,
                 'to' => $kyu,
                 'grade_date' => $birthday->toDateString(),
