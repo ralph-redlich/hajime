@@ -16,7 +16,7 @@ class TransferMonToKyu extends Command
                             {--date= : Treat this Y-m-d date as today (Europe/Dublin) }
                             {--catch-up=7 : Also process 14th birthdays from this many days before today}';
 
-    protected $description = 'Add the mapped Kyu grade for active members who have turned 14 (Mon-to-Kyu transfer)';
+    protected $description = 'Add the mapped Kyu grade for all members (active or lapsed) who have turned 14 (Mon-to-Kyu transfer)';
 
     public function handle()
     {
@@ -28,8 +28,10 @@ class TransferMonToKyu extends Command
         $created = $skipped = $failed = 0;
 
         // Members born between (since - 14y) and (today - 14y); leap-day births are
-        // handled when each exact birthday is computed below.
-        Member::active()
+        // handled when each exact birthday is computed below. Members without an active
+        // membership are included on purpose: they may return later and must already hold
+        // their Kyu grade.
+        Member::query()
             ->whereBetween('dob', [
                 $since->copy()->subYears(MonToKyu::AGE)->subDay()->toDateString(),
                 $today->copy()->subYears(MonToKyu::AGE)->addDay()->toDateString(),

@@ -128,14 +128,19 @@ class TransferMonToKyuTest extends TestCase
         $this->assertFalse((bool) $manual->fresh()->auto_transferred);
     }
 
-    public function test_inactive_members_are_skipped_and_the_transfer_is_logged(): void
+    public function test_inactive_members_are_transferred_too_and_the_transfer_is_logged(): void
     {
         $inactive = $this->member('2012-06-15', '6th Mon Orange', ['active' => 0]);
         $active = $this->member('2012-06-15', '6th Mon Orange');
 
         $this->run14();
 
-        $this->assertNull($this->autoGrade($inactive));
+        $this->assertNotNull($this->autoGrade($inactive));
+        $this->assertNotNull($this->autoGrade($active));
+        $this->assertDatabaseHas('activity_log', [
+            'description' => 'Automatic Mon-to-Kyu grade transfer',
+            'subject_id' => $inactive->id,
+        ]);
         $this->assertDatabaseHas('activity_log', [
             'description' => 'Automatic Mon-to-Kyu grade transfer',
             'subject_id' => $active->id,
