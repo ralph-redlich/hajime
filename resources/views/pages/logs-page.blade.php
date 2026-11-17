@@ -69,17 +69,22 @@
                                     <div class="flex items-center">
                                         <div>
                                             <p class="text-gray-900 whitespace-no-wrap font-bold">
-                                                {{ $log->getExtraProperty('name') }}
+                                                @php
+                                                    $subject = $log->subject;
+                                                    $itemName = $log->getExtraProperty('name')
+                                                        ?? ($subject instanceof \App\Models\Member
+                                                            ? trim($subject->first_name . ' ' . $subject->last_name)
+                                                            : ($subject->name ?? null));
+                                                @endphp
+                                                {{ $itemName }}
                                             </p>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="px-5 py-5 border-b border-gray-200 text-sm hidden lg:block">
                                     <p class="text-gray-900 whitespace-no-wrap">
-                                        @php
-                                        $user = \App\Models\User::find($log->causer_id);
-                                         @endphp
-                                        {{ $user->name }}
+                                        {{-- Automated actions (e.g. scheduled grade transfer) have no causer --}}
+                                        {{ $log->causer?->name ?? 'System' }}
                                     </p>
                                 </td>
                                 <td class="py-5 border-b border-gray-200 text-sm">
